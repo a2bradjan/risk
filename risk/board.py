@@ -253,28 +253,28 @@ class Board(object):
             return None
         territories={}
         territories[source]=[source]
-        pq=heapdict.heapdict()
+        pq = heapdict.heapdict()
         pq[source]=0
         visited=[source]
         player_id=self.owner(source)
         while pq:
-            (cter, cterp)=pq.popitem()
-            board_info=[country for country in self.neighbors(cter) if (country not in visited and self.owner(country)!=player_id)]
+            (cur_ter, cur_ter_priority)=pq.popitem()
+            board_info = [country for country in self.neighbors(cur_ter) if (country not in visited and self.owner(country)!=player_id)]
             for territory in board_info:
-                if territory==target:
-                    path=territories[cter]
+                if territory == target:
+                    path=territories[cur_ter]
                     path.append(territory)
                     return path
-                copy_path=copy.deepcopy(territories[cter])
+                copy_path = copy.deepcopy(territories[cur_ter])
                 copy_path.append(territory)
-                priority=self.armies(territory)+cterp
+                priority = self.armies(territory) + cur_ter_priority
                 if territory not in pq:
                     territories[territory]=copy_path
-                    pq[territory]=cterp+self.armies(territory)
-                elif priority<=pq[territory]:
-                    territories[territory]=copy_path
-                    pq[territory]=priority
-            visited.append(cter)
+                    pq[territory]= cur_ter_priority+self.armies(territory)
+                elif priority <= pq[territory]:
+                    territories[territory] = copy_path
+                    pq[territory] = priority
+            visited.append(cur_ter)
 
     def can_attack(self, source, target):
         '''
