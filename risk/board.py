@@ -177,23 +177,24 @@ class Board(object):
         '''
         stack=[]
         stack.append(source)
-        queue=deque([])
+        queue = deque([])
         queue.append(stack)
         board=risk.definitions.territory_names
         board=list(board.keys())
         if source==target:
             return stack
         while queue:
-            cter=queue.popleft()
-            board_info=[territory for territory in board if territory in self.neighbors(cter[-1])]
+            cur_territory = queue.popleft()
+            board_info = [territory for territory in board if territory in self.neighbors(cur_territory[-1])]
             for territory in board_info:
-                if territory==target:
-                    cter.append(territory)
-                    return cter
-                copy_stack=copy.deepcopy(cter)
+                if territory == target:
+                    cur_territory.append(territory)
+                    return cur_territory
+                copy_stack = copy.deepcopy(cur_territory)
                 copy_stack.append(territory)
                 queue.append(copy_stack)
                 board.remove(territory)
+
 
     def can_fortify(self, source, target):
         '''
@@ -215,25 +216,25 @@ class Board(object):
         '''
         Static method for can_fortify
         ''' 
-        stack=[]
+        stack = []
         stack.append(source)
-        queue=deque([])
+        queue = deque([])
         queue.append(stack)
-        board=risk.definitions.territory_names
-        board=list(board.keys())
-        if source==target:
+        board = risk.definitions.territory_names
+        board = list(board.keys())
+        if source == target:
             return stack
         while queue:
-            cter=queue.popleft()
-            player_id=self.owner(cter[-1])
-            closen=self.neighbors(cter[-1])
-            neighbor=[country for country in closen if self.owner(country)==ownid]
-            binfo=[territory for territory in board if territory in neighbor]
-            for territory in binfo:
-                if territory==target:
-                    cter.append(territory)
-                    return cter
-                copy_stack=copy.deepcopy(cter)
+            cur_territory = queue.popleft()
+            player_id=self.owner(cur_territory[-1])
+            adj=self.neighbors(cur_territory[-1])
+            neighbor=[country for country in adj if self.owner(country)==player_id]
+            board_info = [territory for territory in board if territory in neighbor]
+            for territory in board_info:
+                if territory == target:
+                    cur_territory.append(territory)
+                    return cur_territory
+                copy_stack = copy.deepcopy(cur_territory)
                 copy_stack.append(territory)
                 queue.append(copy_stack)
                 board.remove(territory)
@@ -293,25 +294,25 @@ class Board(object):
         '''
         Static method for can_attack
         '''
-        stack=[]
+        stack = []
         stack.append(source)
         queue=deque([])
         queue.append(stack)
-        board=risk.definitions.territory_names
-        board=list(board.keys())
-        if source==target:
+        board = risk.definitions.territory_names
+        board = list(board.keys())
+        if source == target:
             return stack
         while queue:
-            cter=queue.popleft()
-            player_id=self.owner(source)
-            adj=self.neighbors(cter[-1])
-            neighbor=[country for country in adj if self.owner(country)!=player_id]
-            board_info=[territory for territory in board if territory in neighbor]
+            cur_territory = queue.popleft()
+            player_id = self.owner(source)
+            adj = self.neighbors(cur_territory[-1])
+            neighbor = [country for country in adj if self.owner(country) != player_id]
+            board_info = [territory for territory in board if territory in neighbor]
             for territory in board_info:
-                if territory==target:
-                    cter.append(territory)
-                    return cter
-                copy_stack = copy.deepcopy(cter)
+                if territory == target:
+                    cur_territory.append(territory)
+                    return cur_territory
+                copy_stack = copy.deepcopy(cur_territory)
                 copy_stack.append(territory)
                 queue.append(copy_stack)
                 board.remove(territory)
