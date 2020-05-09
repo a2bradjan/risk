@@ -256,7 +256,7 @@ class Board(object):
         player_id=self.owner(source)
         while pq:
             (cter, cterp)=pq.popitem()
-            binfo=[country for country in self.neighbors(cur_ter) if (country not in visited and self.owner(country)!=player_id)]
+            binfo=[country for country in self.neighbors(cter) if (country not in visited and self.owner(country)!=player_id)]
             for territory in binfo:
                 if territory==target:
                     path=territories[cter]
@@ -283,16 +283,16 @@ class Board(object):
         if source==target:
             return stack
         while queue:
-            cur_territory=queue.popleft()
+            cter=queue.popleft()
             player_id=self.owner(source)
-            adj=self.neighbors(cur_territory[-1])
+            adj=self.neighbors(cter[-1])
             neighbor=[country for country in adj if self.owner(country)!=player_id]
-            board_info=[territory for territory in board if territory in neighbor]
+            binfo=[territory for territory in board if territory in neighbor]
             for territory in board_info:
                 if territory==target:
-                    cur_territory.append(territory)
-                    return cur_territory
-                copy_stack=copy.deepcopy(cur_territory)
+                    cter.append(territory)
+                    return cter
+                copy_stack=copy.deepcopy(cter)
                 copy_stack.append(territory)
                 queue.append(copy_stack)
                 board.remove(territory)
