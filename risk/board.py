@@ -121,18 +121,15 @@ class Board(object):
         Returns:
             bool: True if the input path is valid
         '''
-
-        # checks for condition 3
-        if len(path) == 1 or len(path) == 0:
+        if len(path)==0 or len(path)==1:
             return True
-        # checks for condition 2
-        elif len(path) != len(set(path)):
+        elif len(path)!=len(set(path)):
             return False
         else:
-            for i in range(len(path)-1):
-                cur_country=path[i]
-                next_country=path[i+1]
-                if next_country not in risk.definitions.territory_neighbors[cur_country]:
+            for e in range(len(path)-1):
+                ccoun=path[e]
+                ncoun=path[e+1]
+                if ncoun not in risk.definitions.territory_neighbors[ccoun]:
                     return False
             return True
     
