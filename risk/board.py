@@ -157,7 +157,7 @@ class Board(object):
         newcost=0
         for e in path:
             if e==path[0]:
-                return
+                continue
             cost+=self.armies(e)
         return newcost
 
@@ -181,12 +181,12 @@ class Board(object):
         stack.append(s)
         queue=deque([])
         queue.append(stack)
-        bord=risk.definitions.territory_names
-        board=list(bord.keys())
+        board=risk.definitions.territory_names
+        board=list(board.keys())
         if s==t:
             return stack
         while queue:
-            cter = queue.popleft()
+            cter=queue.popleft()
             board_info=[territory for territory in board if territory in self.neighbors(cter[-1])]
             for territory in board_info:
                 if territory==t:
