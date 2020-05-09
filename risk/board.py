@@ -155,10 +155,10 @@ class Board(object):
             bool: the number of enemy armies in the path
         '''
         newcost=0
-        for country in path:
-            if country==path[0]:
+        for e in path:
+            if e==path[0]:
                 continue
-            cost+=self.armies(country)
+            newcost+=self.armies(e)
         return newcost
 
     def shortest_path(self, source, target):
