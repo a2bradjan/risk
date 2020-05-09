@@ -213,13 +213,15 @@ class Board(object):
 
     #@staticmethod
     def _fortify(self, source, target):
+        s=source
+        t=target
         stack=[]
-        stack.append(source)
+        stack.append(s)
         queue=deque([])
         queue.append(stack)
         board=risk.definitions.territory_names
         board=list(board.keys())
-        if source==target:
+        if s==t:
             return stack
         while queue:
             cter=queue.popleft()
@@ -228,7 +230,7 @@ class Board(object):
             neighbor=[country for country in adj if self.owner(country)==player_id]
             binfo=[territory for territory in board if territory in neighbor]
             for territory in binfo:
-                if territory==target:
+                if territory==t:
                     cter.append(territory)
                     return cter
                 copy_stack=copy.deepcopy(cter)
