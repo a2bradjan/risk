@@ -207,7 +207,9 @@ class Board(object):
                 board.remove(territory)
 
     def can_fortify(self, source, target):
-        if self._fortify(source, target) == None:
+        s=source
+        t=target
+        if self._fortify(s, t) == None:
             return False
         return True
 
@@ -253,7 +255,7 @@ class Board(object):
             return None
         territories={}
         territories[source]=[source]
-        pq = heapdict.heapdict()
+        pq=heapdict.heapdict()
         pq[source]=0
         visited=[source]
         player_id=self.owner(source)
@@ -261,19 +263,19 @@ class Board(object):
             (cur_ter, cur_ter_priority)=pq.popitem()
             board_info = [country for country in self.neighbors(cur_ter) if (country not in visited and self.owner(country)!=player_id)]
             for territory in board_info:
-                if territory == target:
+                if territory==target:
                     path=territories[cur_ter]
                     path.append(territory)
                     return path
-                copy_path = copy.deepcopy(territories[cur_ter])
+                copy_path=copy.deepcopy(territories[cur_ter])
                 copy_path.append(territory)
-                priority = self.armies(territory) + cur_ter_priority
+                priority=self.armies(territory) + cur_ter_priority
                 if territory not in pq:
                     territories[territory]=copy_path
-                    pq[territory]= cur_ter_priority+self.armies(territory)
-                elif priority <= pq[territory]:
-                    territories[territory] = copy_path
-                    pq[territory] = priority
+                    pq[territory]=cur_ter_priority+self.armies(territory)
+                elif priority<=pq[territory]:
+                    territories[territory]=copy_path
+                    pq[territory]=priority
             visited.append(cur_ter)
 
     def can_attack(self, source, target):
@@ -284,7 +286,9 @@ class Board(object):
         Returns:
             bool: True if a valid attack path exists between source and target; else False
         '''
-        if self._attack(source, target)==None or source==target:
+        s=source
+        t=target
+        if self._attack(s, t)==None or s==t:
             return False
         return True
 
