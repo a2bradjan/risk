@@ -207,12 +207,12 @@ class Board(object):
                 board.remove(territory)
 
     def can_fortify(self, source, target):
-        if self.fortify(source, target) == None:
+        if self._fortify(source, target) == None:
             return False
         return True
 
     #@staticmethod
-    def fortify(self, source, target):
+    def _fortify(self, source, target):
         stack=[]
         stack.append(source)
         queue=deque([])
@@ -282,12 +282,12 @@ class Board(object):
         Returns:
             bool: True if a valid attack path exists between source and target; else False
         '''
-        if self.attack(source, target)==None or source==target:
+        if self._attack(source, target)==None or source==target:
             return False
         return True
 
     #@staticmethod
-    def attack(self, source, target):
+    def _attack(self, source, target):
         stack = []
         stack.append(source)
         queue=deque([])
