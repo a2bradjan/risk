@@ -151,8 +151,8 @@ class Board(object):
             return False
         else:
             player_id=self.owner(path[0])
-            for country in path:
-                if path[0]!=country and self.owner(country)==player_id:
+            for e in path:
+                if path[0]!=e and self.owner(e)==player_id:
                     return False
             return True
 
