@@ -206,7 +206,12 @@ class Board(object):
                 queue.append(copy_stack)
                 board.remove(territory)
 
-    @staticmethod
+    def can_fortify(self, source, target):
+        if self._fortify(source, target) == None:
+            return False
+        return True
+
+    #@staticmethod
     def _fortify(self, source, target):
         stack=[]
         stack.append(source)
@@ -230,11 +235,6 @@ class Board(object):
                 copy_stack.append(territory)
                 queue.append(copy_stack)
                 board.remove(territory)
-
-    def can_fortify(self, source, target):
-        if self._fortify(source, target) == None:
-            return False
-        return True
 
     def cheapest_attack_path(self, source, target):
         '''
@@ -274,7 +274,19 @@ class Board(object):
                     pq[territory] = priority
             visited.append(cur_ter)
 
-    @staticmethod
+    def can_attack(self, source, target):
+        '''
+        Args:
+            source (int): territory_id of source node
+            target (int): territory_id of target node
+        Returns:
+            bool: True if a valid attack path exists between source and target; else False
+        '''
+        if self._attack(source, target)==None or source==target:
+            return False
+        return True
+
+    #@staticmethod
     def _attack(self, source, target):
         stack = []
         stack.append(source)
@@ -298,18 +310,6 @@ class Board(object):
                 copy_stack.append(territory)
                 queue.append(copy_stack)
                 board.remove(territory)
-
-    def can_attack(self, source, target):
-        '''
-        Args:
-            source (int): territory_id of source node
-            target (int): territory_id of target node
-        Returns:
-            bool: True if a valid attack path exists between source and target; else False
-        '''
-        if self._attack(source, target)==None or source==target:
-            return False
-        return True
 
     # ======================= #
     # == Continent Methods == #
