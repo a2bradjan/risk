@@ -195,13 +195,13 @@ class Board(object):
         if source==target:
             return stack
         while queue:
-            cur_territory=queue.popleft()
-            board_info=[territory for territory in board if territory in self.neighbors(cur_territory[-1])]
-            for territory in board_info:
+            cter=queue.popleft()
+            binfo=[territory for territory in board if territory in self.neighbors(cter[-1])]
+            for territory in binfo:
                 if territory==target:
-                    cur_territory.append(territory)
-                    return cur_territory
-                copy_stack=copy.deepcopy(cur_territory)
+                    cter.append(territory)
+                    return cter
+                copy_stack=copy.deepcopy(cter)
                 copy_stack.append(territory)
                 queue.append(copy_stack)
                 board.remove(territory)
