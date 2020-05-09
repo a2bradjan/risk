@@ -216,16 +216,16 @@ class Board(object):
         if source==target:
             return stack
         while queue:
-            cur_territory=queue.popleft()
-            player_id=self.owner(cur_territory[-1])
-            adj=self.neighbors(cur_territory[-1])
+            cter=queue.popleft()
+            player_id=self.owner(cter[-1])
+            adj=self.neighbors(cter[-1])
             neighbor=[country for country in adj if self.owner(country)==player_id]
-            board_info=[territory for territory in board if territory in neighbor]
-            for territory in board_info:
+            binfo=[territory for territory in board if territory in neighbor]
+            for territory in binfo:
                 if territory==target:
-                    cur_territory.append(territory)
-                    return cur_territory
-                copy_stack=copy.deepcopy(cur_territory)
+                    cter.append(territory)
+                    return cter
+                copy_stack=copy.deepcopy(cter)
                 copy_stack.append(territory)
                 queue.append(copy_stack)
                 board.remove(territory)
