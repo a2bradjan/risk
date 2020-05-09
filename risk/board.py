@@ -2,6 +2,7 @@ import os
 import random
 from collections import namedtuple
 
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.path import Path
@@ -63,7 +64,8 @@ class Board(object):
             generator: Generator of Territories.
         """
         neighbor_ids = risk.definitions.territory_neighbors[territory_id]
-        return (t for t in self.data if t.territory_id in neighbor_ids)
+        return neighbor_ids
+        #return (t for t in self.data if t.territory_id in neighbor_ids)
 
     def hostile_neighbors(self, territory_id):
         """
@@ -76,9 +78,13 @@ class Board(object):
         Returns:
             generator: Generator of Territories.
         """
+        hostile_neighbors=[]
         player_id = self.owner(territory_id)
         neighbor_ids = risk.definitions.territory_neighbors[territory_id]
-        return (t for t in self.data if (t.player_id != player_id and t.territory_id in neighbor_ids))
+        for neighbor in neighbor_ids:
+            if self.owner(neighbor) != player_id:
+                hostile_neighbors.append(neighbor)
+        return hostile_neighbors
 
     def friendly_neighbors(self, territory_id):
         """
@@ -89,9 +95,15 @@ class Board(object):
         Returns:
             generator: Generator of tuples of the form (territory_id, player_id, armies).
         """
+        friendlies = []
+
         player_id = self.owner(territory_id)
         neighbor_ids = risk.definitions.territory_neighbors[territory_id]
-        return (t for t in self.data if (t.player_id == player_id and t.territory_id in neighbor_ids))
+        for neighbor in neighbor_ids:
+            if self.owner(neighbor) == player_id:
+                friendlies.append(neighbor)
+        return friendlies
+        # return (t for t in self.data if (t.player_id == player_id and t.territory_id in neighbor_ids))
 
     
     # ================== #
@@ -103,24 +115,31 @@ class Board(object):
         A path is list of territories satisfying two conditions:
         1. For all territories V in the list (except the last one), the next territory W is in the neighbors if V.
         2. No territory is repeated multiple times.
-        Valid paths can be of any length (including 0 and 1).
+        3. Valid paths can be of any length (including 0 and 1).
         Args:
             path ([int]): a list of territory_ids which represent the path
         Returns:
             bool: True if the input path is valid
         '''
-        lp=len(path)
-        if lp==1 or lp==0:
+
+        # checks for condition 3
+        if len(path) == 1 or len(path) == 0:
+
             return True
-        elif lp!=len(set(path)):
+
+        # checks for condition 2
+        elif len(path) != len(set(path)):
             return False
+
         else:
-            for country in range(lp-1):
-                ccoun=path[country]
-                ncoun=path[country+1]
-                if ncoun not in risk.definitions.territory_neighbors[ccoun]:
+            for i in range(len(path)-1):
+
+                cur_country=path[i]
+                next_country=path[i+1]
+                if next_country not in risk.definitions.territory_neighbors[cur_country]:
                     return False
             return True
+
     
     def is_valid_attack_path(self, path):
         '''
@@ -128,22 +147,26 @@ class Board(object):
         a player's armies cannot move through territories they already occupy;
         they must move through enemy territories.
         All valid attacks, therefore, will follow a path of starting on one player's territory and moving trough enemy territories.
-        Formally, an attack path is a valid path satisfying the following two additional properties:
+        0. Formally, an attack path is a valid path satisfying the following two additional properties:
         1. An attack path must contain at least two territories;
-        1. If the first territory is owned by player A, then no other territories in the path are also owned by A.
+        2. If the first territory is owned by player A, then no other territories in the path are also owned by A.
         Args:
             path ([int]): a list of territory_ids which represent the path
         Returns:
             bool: True if the path is an attack path
         '''
-        if len(path)<2 or not self.is_valid_path(path):
+
+        if len(path) < 2 or not self.is_valid_path(path):
             return False
+
         else:
-            player_id=self.owner(path[0])
+            player_id = self.owner(path[0])
             for country in path:
-                if path[0]!=country and self.owner(country)==player_id:
+                if path[0] != country and self.owner(country) == player_id:
                     return False
             return True
+
+
 
     def cost_of_attack_path(self, path):
         '''
@@ -152,14 +175,18 @@ class Board(object):
         Args:
             path ([int]): a list of territory_ids which must be a valid attack path
         Returns:
-            bool: the number of enemy armies in the path
+            int: the number of enemy armies in the path
         '''
-        newcost=0
+
+        cost=0
         for country in path:
-            if country==path[0]:
+            if country == path[0]:
                 continue
-            newcost+=self.armies(country)
-        return newcost
+            cost+=self.armies(country)
+        return cost
+
+
+
 
     def shortest_path(self, source, target):
         '''
@@ -175,16 +202,21 @@ class Board(object):
         Returns:
             [int]: a valid path between source and target that has minimum length; this path is guaranteed to exist
         '''
+
         stack=[]
         stack.append(source)
         queue = deque([])
         queue.append(stack)
+
         board=risk.definitions.territory_names
         board=list(board.keys())
+
         if source==target:
             return stack
+
         while queue:
             cur_territory = queue.popleft()
+
             board_info = [territory for territory in board if territory in self.neighbors(cur_territory[-1])]
             for territory in board_info:
                 if territory == target:
@@ -195,35 +227,19 @@ class Board(object):
                 queue.append(copy_stack)
                 board.remove(territory)
 
-
-    def can_fortify(self, source, target):
-        '''
-        At the end of a turn, a player may choose to fortify a target territory by moving armies from a source territory.
-        In order for this to be a valid move,
-        there must be a valid path between the source and target territories that is owned entirely by the same player.
-        Args:
-            source (int): the source territory_id
-            target (int): the target territory_id
-        Returns:
-            bool: True if reinforcing the target from the source territory is a valid move
-        '''
-        if self._fortify(source, target)==None:
-            return False
-        return True
-
-    #@staticmethod
     def _fortify(self, source, target):
-        '''
-        Static method for can_fortify
-        ''' 
+
         stack = []
         stack.append(source)
         queue = deque([])
         queue.append(stack)
+
         board = risk.definitions.territory_names
         board = list(board.keys())
+
         if source == target:
             return stack
+
         while queue:
             cur_territory = queue.popleft()
             player_id=self.owner(cur_territory[-1])
@@ -239,6 +255,15 @@ class Board(object):
                 queue.append(copy_stack)
                 board.remove(territory)
 
+
+    def can_fortify(self, source, target):
+
+        if self._fortify(source, target) == None:
+            return False
+        return True
+
+
+
     def cheapest_attack_path(self, source, target):
         '''
         This function uses Dijkstra's algorithm to calculate a cheapest valid attack path between two territories if such a path exists.
@@ -250,58 +275,62 @@ class Board(object):
         Returns:
             [int]: a list of territory_ids representing the valid attack path; if no path exists, then it returns None instead
         '''
+
         if not self.can_attack(source, target):
             return None
+
         territories={}
         territories[source]=[source]
         pq = heapdict.heapdict()
+
         pq[source]=0
         visited=[source]
         player_id=self.owner(source)
+
         while pq:
+
             (cur_ter, cur_ter_priority)=pq.popitem()
             board_info = [country for country in self.neighbors(cur_ter) if (country not in visited and self.owner(country)!=player_id)]
+
             for territory in board_info:
+
                 if territory == target:
+
                     path=territories[cur_ter]
                     path.append(territory)
                     return path
+
                 copy_path = copy.deepcopy(territories[cur_ter])
                 copy_path.append(territory)
                 priority = self.armies(territory) + cur_ter_priority
                 if territory not in pq:
                     territories[territory]=copy_path
                     pq[territory]= cur_ter_priority+self.armies(territory)
+
                 elif priority <= pq[territory]:
+
                     territories[territory] = copy_path
                     pq[territory] = priority
+
             visited.append(cur_ter)
 
-    def can_attack(self, source, target):
-        '''
-        Args:
-            source (int): territory_id of source node
-            target (int): territory_id of target node
-        Returns:
-            bool: True if a valid attack path exists between source and target; else False
-        '''
-        if source==target or self._attack(source, target)==None:
-            return False
-        return True
 
-    #@staticmethod
+
+
+
     def _attack(self, source, target):
-        '''
-        Static method for can_attack
-        '''
+
         stack = []
         stack.append(source)
         queue=deque([])
         queue.append(stack)
+
         board = risk.definitions.territory_names
         board = list(board.keys())
+
         if source == target:
             return stack
+
         while queue:
             cur_territory = queue.popleft()
             player_id = self.owner(source)
@@ -316,6 +345,20 @@ class Board(object):
                 copy_stack.append(territory)
                 queue.append(copy_stack)
                 board.remove(territory)
+
+    def can_attack(self, source, target):
+        '''
+        Args:
+            source (int): territory_id of source node
+            target (int): territory_id of target node
+        Returns:
+            bool: True if a valid attack path exists between source and target; else False
+        '''
+
+        if self._attack(source, target) == None or source==target:
+            return False
+        return True
+
 
     # ======================= #
     # == Continent Methods == #
@@ -709,4 +752,3 @@ class Board(object):
             generator: Generator of Territories.
         """
         return (t for t in self.data if (t.player_id == player_id and t.armies > 1))
-
