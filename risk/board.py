@@ -206,6 +206,7 @@ class Board(object):
                 queue.append(copy_stack)
                 board.remove(territory)
 
+    @staticmethod
     def _fortify(self, source, target):
         stack=[]
         stack.append(source)
@@ -273,7 +274,7 @@ class Board(object):
                     pq[territory] = priority
             visited.append(cur_ter)
 
-
+    @staticmethod
     def _attack(self, source, target):
         stack = []
         stack.append(source)
