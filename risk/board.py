@@ -175,21 +175,19 @@ class Board(object):
         Returns:
             [int]: a valid path between source and target that has minimum length; this path is guaranteed to exist
         '''
-        s=source
-        t=target
         stack=[]
-        stack.append(s)
+        stack.append(source)
         queue=deque([])
         queue.append(stack)
         board=risk.definitions.territory_names
         board=list(board.keys())
-        if s==t:
+        if source==target:
             return stack
         while queue:
             cter=queue.popleft()
             board_info=[territory for territory in board if territory in self.neighbors(cter[-1])]
             for territory in board_info:
-                if territory==t:
+                if territory==target:
                     cter.append(territory)
                     return cter
                 copy_stack=copy.deepcopy(cter)
@@ -217,15 +215,13 @@ class Board(object):
         '''
         Static method for can_fortify
         ''' 
-        s=source
-        t=target
         stack=[]
-        stack.append(s)
+        stack.append(source)
         queue=deque([])
         queue.append(stack)
         board=risk.definitions.territory_names
         board=list(board.keys())
-        if s==t:
+        if source==target:
             return stack
         while queue:
             cter=queue.popleft()
@@ -234,7 +230,7 @@ class Board(object):
             neighbor=[country for country in closen if self.owner(country)==ownid]
             binfo=[territory for territory in board if territory in neighbor]
             for territory in binfo:
-                if territory==t:
+                if territory==target:
                     cter.append(territory)
                     return cter
                 copy_stack=copy.deepcopy(cter)
@@ -253,19 +249,17 @@ class Board(object):
         Returns:
             [int]: a list of territory_ids representing the valid attack path; if no path exists, then it returns None instead
         '''
-        s=source
-        t=target
         territories={}
-        territories[s]=[s]
+        territories[source]=[source]
         pq=heapdict.heapdict()
-        pq[s]=0
-        visited=[s]
-        player_id=self.owner(s)
-        if not self.can_attack(s, t):
+        pq[source]=0
+        visited=[source]
+        player_id=self.owner(source)
+        if not self.can_attack(source, target):
             return None
         while pq:
             (cter, cterp)=pq.popitem()
-            board_info=[country for country in self.neighbors(cter) if (country not in visited and self.owner(country)!=player_id)]
+            binfo=[country for country in self.neighbors(cter) if (country not in visited and self.owner(country)!=player_id)]
             for territory in board_info:
                 if territory==target:
                     path=territories[cter]
@@ -290,9 +284,7 @@ class Board(object):
         Returns:
             bool: True if a valid attack path exists between source and target; else False
         '''
-        s=source
-        t=target
-        if s==t or self._attack(s, t)==None:
+        if source==target or self._attack(source, target)==None:
             return False
         return True
 
@@ -301,8 +293,6 @@ class Board(object):
         '''
         Static method for can_attack
         '''
-        s=source
-        t=target
         stack=[]
         stack.append(source)
         queue=deque([])
@@ -313,10 +303,10 @@ class Board(object):
             return stack
         while queue:
             cter=queue.popleft()
-            player_id=self.owner(s)
+            player_id=self.owner(source)
             adj=self.neighbors(cter[-1])
             neighbor=[country for country in adj if self.owner(country)!=player_id]
-            board_info=[territory for territory in board if territory in neighbor]
+            binfo=[territory for territory in board if territory in neighbor]
             for territory in board_info:
                 if territory==target:
                     cter.append(territory)
