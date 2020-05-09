@@ -124,22 +124,17 @@ class Board(object):
 
         # checks for condition 3
         if len(path) == 1 or len(path) == 0:
-
             return True
-
         # checks for condition 2
         elif len(path) != len(set(path)):
             return False
-
         else:
             for i in range(len(path)-1):
-
                 cur_country=path[i]
                 next_country=path[i+1]
                 if next_country not in risk.definitions.territory_neighbors[cur_country]:
                     return False
             return True
-
     
     def is_valid_attack_path(self, path):
         '''
@@ -155,18 +150,14 @@ class Board(object):
         Returns:
             bool: True if the path is an attack path
         '''
-
         if len(path) < 2 or not self.is_valid_path(path):
             return False
-
         else:
             player_id = self.owner(path[0])
             for country in path:
                 if path[0] != country and self.owner(country) == player_id:
                     return False
             return True
-
-
 
     def cost_of_attack_path(self, path):
         '''
@@ -177,16 +168,12 @@ class Board(object):
         Returns:
             int: the number of enemy armies in the path
         '''
-
         cost=0
         for country in path:
             if country == path[0]:
                 continue
             cost+=self.armies(country)
         return cost
-
-
-
 
     def shortest_path(self, source, target):
         '''
@@ -202,21 +189,16 @@ class Board(object):
         Returns:
             [int]: a valid path between source and target that has minimum length; this path is guaranteed to exist
         '''
-
         stack=[]
         stack.append(source)
         queue = deque([])
         queue.append(stack)
-
         board=risk.definitions.territory_names
         board=list(board.keys())
-
         if source==target:
             return stack
-
         while queue:
             cur_territory = queue.popleft()
-
             board_info = [territory for territory in board if territory in self.neighbors(cur_territory[-1])]
             for territory in board_info:
                 if territory == target:
@@ -228,18 +210,14 @@ class Board(object):
                 board.remove(territory)
 
     def _fortify(self, source, target):
-
         stack = []
         stack.append(source)
         queue = deque([])
         queue.append(stack)
-
         board = risk.definitions.territory_names
         board = list(board.keys())
-
         if source == target:
             return stack
-
         while queue:
             cur_territory = queue.popleft()
             player_id=self.owner(cur_territory[-1])
@@ -255,9 +233,7 @@ class Board(object):
                 queue.append(copy_stack)
                 board.remove(territory)
 
-
     def can_fortify(self, source, target):
-
         if self._fortify(source, target) == None:
             return False
         return True
@@ -275,62 +251,42 @@ class Board(object):
         Returns:
             [int]: a list of territory_ids representing the valid attack path; if no path exists, then it returns None instead
         '''
-
         if not self.can_attack(source, target):
             return None
-
         territories={}
         territories[source]=[source]
         pq = heapdict.heapdict()
-
         pq[source]=0
         visited=[source]
         player_id=self.owner(source)
-
         while pq:
-
             (cur_ter, cur_ter_priority)=pq.popitem()
             board_info = [country for country in self.neighbors(cur_ter) if (country not in visited and self.owner(country)!=player_id)]
-
             for territory in board_info:
-
                 if territory == target:
-
                     path=territories[cur_ter]
                     path.append(territory)
                     return path
-
                 copy_path = copy.deepcopy(territories[cur_ter])
                 copy_path.append(territory)
                 priority = self.armies(territory) + cur_ter_priority
                 if territory not in pq:
                     territories[territory]=copy_path
                     pq[territory]= cur_ter_priority+self.armies(territory)
-
                 elif priority <= pq[territory]:
-
                     territories[territory] = copy_path
                     pq[territory] = priority
-
             visited.append(cur_ter)
 
-
-
-
-
     def _attack(self, source, target):
-
         stack = []
         stack.append(source)
         queue=deque([])
         queue.append(stack)
-
         board = risk.definitions.territory_names
         board = list(board.keys())
-
         if source == target:
             return stack
-
         while queue:
             cur_territory = queue.popleft()
             player_id = self.owner(source)
@@ -354,7 +310,6 @@ class Board(object):
         Returns:
             bool: True if a valid attack path exists between source and target; else False
         '''
-
         if self._attack(source, target) == None or source==target:
             return False
         return True
