@@ -251,19 +251,21 @@ class Board(object):
         Returns:
             [int]: a list of territory_ids representing the valid attack path; if no path exists, then it returns None instead
         '''
-        if not self.can_attack(source, target):
+        s=source
+        t=target
+        if not self.can_attack(s, t):
             return None
         territories={}
-        territories[source]=[source]
+        territories[s]=[s]
         pq=heapdict.heapdict()
-        pq[source]=0
-        visited=[source]
-        player_id=self.owner(source)
+        pq[s]=0
+        visited=[s]
+        player_id=self.owner(s)
         while pq:
             (cur_ter, cur_ter_priority)=pq.popitem()
             board_info = [country for country in self.neighbors(cur_ter) if (country not in visited and self.owner(country)!=player_id)]
             for territory in board_info:
-                if territory==target:
+                if territory==t:
                     path=territories[cur_ter]
                     path.append(territory)
                     return path
