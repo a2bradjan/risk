@@ -210,7 +210,7 @@ class Board(object):
             return False
         return True
 
-    @staticmethod
+    #@staticmethod
     def _fortify(self, source, target):
         '''
         Static method for can_fortify
@@ -249,17 +249,17 @@ class Board(object):
         Returns:
             [int]: a list of territory_ids representing the valid attack path; if no path exists, then it returns None instead
         '''
+        if not self.can_attack(source, target):
+            return None
         territories={}
         territories[source]=[source]
         pq=heapdict.heapdict()
         pq[source]=0
         visited=[source]
         player_id=self.owner(source)
-        if not self.can_attack(source, target):
-            return None
         while pq:
             (cter, cterp)=pq.popitem()
-            binfo=[country for country in self.neighbors(cter) if (country not in visited and self.owner(country)!=player_id)]
+            board_info=[country for country in self.neighbors(cter) if (country not in visited and self.owner(country)!=player_id)]
             for territory in board_info:
                 if territory==target:
                     path=territories[cter]
@@ -288,7 +288,7 @@ class Board(object):
             return False
         return True
 
-    @staticmethod
+    #@staticmethod
     def _attack(self, source, target):
         '''
         Static method for can_attack
@@ -306,7 +306,7 @@ class Board(object):
             player_id=self.owner(source)
             adj=self.neighbors(cter[-1])
             neighbor=[country for country in adj if self.owner(country)!=player_id]
-            binfo=[territory for territory in board if territory in neighbor]
+            board_info=[territory for territory in board if territory in neighbor]
             for territory in board_info:
                 if territory==target:
                     cter.append(territory)
