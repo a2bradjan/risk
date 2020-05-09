@@ -116,9 +116,9 @@ class Board(object):
             return False
         else:
             for e in range(lp-1):
-                cur_country=path[i]
-                next_country=path[i+1]
-                if next_country not in risk.definitions.territory_neighbors[cur_country]:
+                ccoun=path[e]
+                ncoun=path[e+1]
+                if ncoun not in risk.definitions.territory_neighbors[ccoun]:
                     return False
             return True
     
@@ -139,9 +139,9 @@ class Board(object):
         if len(path)<2 or not self.is_valid_path(path):
             return False
         else:
-            ownpath=self.owner(path[0])
+            player_id=self.owner(path[0])
             for e in path:
-                if path[0]!=e and self.owner(e)==ownpath:
+                if path[0]!=e and self.owner(e)==player_id:
                     return False
             return True
 
@@ -229,7 +229,7 @@ class Board(object):
             return stack
         while queue:
             cter=queue.popleft()
-            ownid=self.owner(cter[-1])
+            player_id=self.owner(cter[-1])
             closen=self.neighbors(cter[-1])
             neighbor=[country for country in closen if self.owner(country)==ownid]
             binfo=[territory for territory in board if territory in neighbor]
@@ -265,7 +265,7 @@ class Board(object):
             return None
         while pq:
             (cter, cterp)=pq.popitem()
-            board_info = [country for country in self.neighbors(cter) if (country not in visited and self.owner(country)!=player_id)]
+            board_info=[country for country in self.neighbors(cter) if (country not in visited and self.owner(country)!=player_id)]
             for territory in board_info:
                 if territory==target:
                     path=territories[cter]
@@ -315,7 +315,7 @@ class Board(object):
             cter=queue.popleft()
             player_id=self.owner(s)
             adj=self.neighbors(cter[-1])
-            neighbor=[country for country in adj if self.owner(country) != player_id]
+            neighbor=[country for country in adj if self.owner(country)!=player_id]
             board_info=[territory for territory in board if territory in neighbor]
             for territory in board_info:
                 if territory==target:
