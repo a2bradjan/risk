@@ -115,9 +115,9 @@ class Board(object):
         elif lp!=len(set(path)):
             return False
         else:
-            for e in range(lp-1):
-                ccoun=path[e]
-                ncoun=path[e+1]
+            for country in range(lp-1):
+                ccoun=path[country]
+                ncoun=path[country+1]
                 if ncoun not in risk.definitions.territory_neighbors[ccoun]:
                     return False
             return True
@@ -140,8 +140,8 @@ class Board(object):
             return False
         else:
             player_id=self.owner(path[0])
-            for e in path:
-                if path[0]!=e and self.owner(e)==player_id:
+            for country in path:
+                if path[0]!=country and self.owner(country)==player_id:
                     return False
             return True
 
