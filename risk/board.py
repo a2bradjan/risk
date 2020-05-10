@@ -207,6 +207,9 @@ class Board(object):
                 board.remove(territory)
 
     def can_fortify(self, source, target):
+        '''
+        Returns True or False if player can fortify a territory
+        '''
         s=source
         t=target
         if self._fortify(s, t) == None:
@@ -215,6 +218,9 @@ class Board(object):
 
     #@staticmethod
     def _fortify(self, source, target):
+        '''
+        Method to help can_fortify
+        '''
         s=source
         t=target
         stack=[]
@@ -296,6 +302,9 @@ class Board(object):
 
     #@staticmethod
     def _attack(self, source, target):
+        '''
+        Method to help can_attack
+        '''
         s=source
         t=target
         stack=[]
